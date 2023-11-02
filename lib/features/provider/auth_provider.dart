@@ -27,6 +27,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> verifyMobileNumber(context) async {
+    Utils.verificationDailog(context, "Wait...");
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: "$countryCode${phoneController.text}",
       timeout: const Duration(minutes: 1),
@@ -34,23 +35,27 @@ class AuthProvider extends ChangeNotifier {
         otpController.text = credential.smsCode.toString();
       },
       verificationFailed: (FirebaseAuthException e) {
+        Navigator.of(context, rootNavigator: true).pop();
         if (e.code == 'invalid-phone-number') {
           Utils.snackBarError(
               "The Provided Phone Number is Not Valid.", context);
         }
       },
       codeSent: (String verificationId, int? resendToken) {
+        Navigator.of(context, rootNavigator: true).pop();
         Utils.snackBarSuccessfull("OTP Sent!", context);
         verID = verificationId;
         setOptScreen(true);
       },
       codeAutoRetrievalTimeout: (String verificationId) {
+        Navigator.of(context, rootNavigator: true).pop();
         Utils.snackBarError("Timeout!", context);
       },
     );
   }
 
   Future<void> verifyOTP(context) async {
+    Utils.verificationDailog(context, "OTP Verifying...");
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
@@ -61,6 +66,7 @@ class AuthProvider extends ChangeNotifier {
         if (result.user != null) {
           // setValidNumber(false);
           // setOptScreen(false);
+          Navigator.of(context, rootNavigator: true).pop();
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const DashBoard()),
@@ -68,6 +74,7 @@ class AuthProvider extends ChangeNotifier {
         }
       }).catchError((e) {
         debugPrint(e);
+        Navigator.of(context, rootNavigator: true).pop();
         Utils.snackBarError("Incorrect OTP!, Try Again", context);
       });
     } catch (e) {

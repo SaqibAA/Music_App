@@ -26,4 +26,20 @@ class Utils {
       ),
     ));
   }
+
+  static verificationDailog(context, String message) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Row(children: [
+              const SizedBox(width: 4),
+              const CircularProgressIndicator(),
+              const SizedBox(width: 10),
+              Text(message,style: const TextStyle(fontSize: 16),),
+            ]),
+          );
+        });
+  }
 }

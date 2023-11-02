@@ -55,14 +55,20 @@ class Login extends StatelessWidget {
                         onCountryChanged: (country) {
                           auth.setCountryCode("+${country.dialCode}");
                         },
-                        validator: (p0) {
-                          if (p0!.isValidNumber()) {
+                        // validator: (p0) {
+                        //   if (p0!.isValidNumber()) {
+                        //     auth.setValidNumber(true);
+                        //   } else {
+                        //     auth.setValidNumber(false);
+                        //   }
+                        //   return "";
+                        // },
+                        onChanged: (value) {
+                          if (value.isValidNumber()) {
                             auth.setValidNumber(true);
                           } else {
                             auth.setValidNumber(false);
                           }
-
-                          return "";
                         },
                         decoration: const InputDecoration(
                             counterText: "",
