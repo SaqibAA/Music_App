@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:music_app/features/features.dart';
+import '../../features.dart';
 import 'package:music_app/global.dart';
 import 'package:provider/provider.dart';
 
@@ -12,14 +12,12 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController phoneController = TextEditingController();
-    TextEditingController otpController = TextEditingController();
     return Consumer<AuthProvider>(builder: (context, auth, child) {
       return WillPopScope(
         onWillPop: () async {
           if (auth.isOTP) {
             auth.setOptScreen(false);
-          }else{
+          } else {
             SystemNavigator.pop();
           }
           return false;
@@ -35,7 +33,7 @@ class Login extends StatelessWidget {
               children: [
                 auth.isOTP
                     ? TextFormField(
-                        controller: otpController,
+                        controller: auth.otpController,
                         keyboardType: TextInputType.number,
                         maxLength: 6,
                         decoration: const InputDecoration(
@@ -46,7 +44,7 @@ class Login extends StatelessWidget {
                       )
                     : IntlPhoneField(
                         invalidNumberMessage: '',
-                        controller: phoneController,
+                        controller: auth.phoneController,
                         keyboardType: TextInputType.phone,
                         showCountryFlag: true,
                         flagsButtonPadding:
@@ -78,15 +76,19 @@ class Login extends StatelessWidget {
                     title: auth.isOTP ? "Verify OTP" : "Send OTP",
                     onPressed: () {
                       if (auth.isOTP) {
+                        if (auth.otpController.text.isEmpty) {
+                          Utils.snackBarError("Enter OTP", context);
+                        } else {
+                          auth.verifyOTP(context);
+                        }
                       } else {
-                        if (phoneController.text.isEmpty) {
+                        if (auth.phoneController.text.isEmpty) {
                           Utils.snackBarError("Enter Mobile Number", context);
                         } else if (!auth.isValidNumber) {
                           Utils.snackBarError(
                               "Enter Mobile Number Correctly", context);
                         } else {
-                          // verifyPhone(auth.countryCode + phoneController.text);
-                          auth.setOptScreen(true);
+                          auth.verifyMobileNumber(context);
                         }
                       }
                     }),
