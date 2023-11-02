@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "169396261036",
+    "project_id": "music-app-dddb5",
+    "storage_bucket": "music-app-dddb5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169396261036:android:1b646e262d7bef7cc88f09",
+        "android_client_info": {
+          "package_name": "com.asadeveloper.music_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb09qTqpYkfwjk4Cp-2wv0UshYdXspvGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
