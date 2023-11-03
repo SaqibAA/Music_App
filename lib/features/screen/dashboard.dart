@@ -36,6 +36,7 @@ class DashBoard extends StatelessWidget {
                 onPressed: () {
                   if (playlist.isSearch) {
                     playlist.setSearch(false);
+                    playlist.setSearchData(playlist.searchMusicData);
                   } else {
                     playlist.setSearch(true);
                   }
@@ -49,7 +50,7 @@ class DashBoard extends StatelessWidget {
             : playlist.musicData.isEmpty
                 ? Center(
                     child: Text(
-                      'Data Not Available',
+                      'Result Not Available',
                       style: textStyle(16),
                     ),
                   )
