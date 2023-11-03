@@ -8,6 +8,9 @@ class DashBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<PlaylistProvider>(context, listen: false);
+    provider.getMusicData();
+
     return Consumer<PlaylistProvider>(builder: (context, playlist, child) {
       return Scaffold(
         appBar: AppBar(
@@ -15,6 +18,7 @@ class DashBoard extends StatelessWidget {
               ? TextFormField(
                   cursorColor: AppColors.whiteColor,
                   style: textStyle(null, AppColors.whiteColor),
+                  onChanged: playlist.onSerachMusic,
                   decoration: InputDecoration(
                     hintText: "Search Song",
                     hintStyle: textStyle(null, AppColors.whiteColor),
@@ -40,22 +44,19 @@ class DashBoard extends StatelessWidget {
                     playlist.isSearch ? Icons.cancel_rounded : Icons.search))
           ],
         ),
-        body: FutureBuilder<List<MusicModel>>(
-          future: playlist.getMusicData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    'An ${snapshot.error} occurred',
-                    style: textStyle(18, Colors.red),
-                  ),
-                );
-              } else if (snapshot.hasData) {
-                final data = snapshot.data;
-                return ListView.builder(
-                    itemCount: data!.length,
+        body: playlist.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : playlist.musicData.isEmpty
+                ? Center(
+                    child: Text(
+                      'Data Not Available',
+                      style: textStyle(16),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: playlist.musicData.length,
                     itemBuilder: (context, index) {
+                      final data = playlist.musicData;
                       return InkWell(
                         onTap: () {
                           swithScreenPush(
@@ -125,14 +126,7 @@ class DashBoard extends StatelessWidget {
                           ),
                         ),
                       );
-                    });
-              }
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          },
-        ),
+                    }),
       );
     });
   }
