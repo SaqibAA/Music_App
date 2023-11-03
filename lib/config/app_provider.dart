@@ -6,4 +6,7 @@ List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider<AuthProvider>(
     create: (context) => AuthProvider(),
   ),
+   ChangeNotifierProvider<PlaylistProvider>(
+    create: (context) => PlaylistProvider(),
+  ),
 ];

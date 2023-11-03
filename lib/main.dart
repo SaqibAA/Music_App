@@ -32,42 +32,44 @@ class MyApp extends StatelessWidget {
     width = MediaQuery.sizeOf(context).width;
     height = MediaQuery.sizeOf(context).height;
     return MultiProvider(
-    providers: appProviders,
-    child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.appColor),
-        scaffoldBackgroundColor: AppColors.whiteColor,
-        appBarTheme: AppBarTheme(
-            backgroundColor: AppColors.appColor,
-            foregroundColor: AppColors.whiteColor,
-            systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarIconBrightness: Brightness.light,
-                statusBarColor: AppColors.appColor,
-                systemNavigationBarColor: Colors.transparent,
-                systemNavigationBarDividerColor: Colors.grey.shade200)),
-        inputDecorationTheme: InputDecorationTheme(
-          isDense: true,
-          constraints: const BoxConstraints(),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-          hintStyle: const TextStyle(fontSize: 14),
-          border: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.appColor),
-              borderRadius: BorderRadius.circular(2)),
-          enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.appColor),
-              borderRadius: BorderRadius.circular(2)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.appColor),
-              borderRadius: BorderRadius.circular(2)),
-          disabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: AppColors.appColor),
-              borderRadius: BorderRadius.circular(2)),
+      providers: appProviders,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.appColor),
+          scaffoldBackgroundColor: AppColors.whiteColor,
+          appBarTheme: AppBarTheme(
+            surfaceTintColor: AppColors.transparent,
+              backgroundColor: AppColors.appColor,
+              foregroundColor: AppColors.whiteColor,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarIconBrightness: Brightness.light,
+                  statusBarColor: AppColors.appColor,
+                  systemNavigationBarColor: Colors.transparent,
+                  systemNavigationBarDividerColor: Colors.grey.shade200)),
+          inputDecorationTheme: InputDecorationTheme(
+            isDense: true,
+            constraints: const BoxConstraints(),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            hintStyle: const TextStyle(fontSize: 14),
+            border: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppColors.appColor),
+                borderRadius: BorderRadius.circular(2)),
+            enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppColors.appColor),
+                borderRadius: BorderRadius.circular(2)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppColors.appColor),
+                borderRadius: BorderRadius.circular(2)),
+            disabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppColors.appColor),
+                borderRadius: BorderRadius.circular(2)),
+          ),
+          useMaterial3: true,
         ),
-        useMaterial3: true,
+        home: const SplashScreen(),
       ),
-      home: const SplashScreen(),
-    ),);
+    );
   }
 }
