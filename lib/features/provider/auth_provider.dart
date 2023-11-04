@@ -12,25 +12,31 @@ class AuthProvider extends ChangeNotifier {
   TextEditingController phoneController = TextEditingController();
   TextEditingController otpController = TextEditingController();
 
+// set Dialog State
   void setDialog(bool val) {
     isDialog = val;
     notifyListeners();
   }
 
+  // set Screen state
   void setOptScreen(bool val) {
     isOTP = val;
     notifyListeners();
   }
 
+// set number valid or not
   void setValidNumber(bool val) {
     isValidNumber = val;
     notifyListeners();
   }
 
+// set Counry code
   void setCountryCode(String code) {
     countryCode = code;
     notifyListeners();
   }
+
+  // Mobile Number Verificarion Funtion
 
   Future<void> verifyMobileNumber(context) async {
     setDialog(true);
@@ -60,6 +66,8 @@ class AuthProvider extends ChangeNotifier {
     );
   }
 
+  // OTP Verificarion Funtion
+
   Future<void> verifyOTP(BuildContext context) async {
     setDialog(true);
     try {
@@ -74,7 +82,7 @@ class AuthProvider extends ChangeNotifier {
         setOptScreen(false);
         setValidNumber(false);
         phoneController.text = '';
-        otpController.text ='';
+        otpController.text = '';
         verID = "";
 
         // ignore: use_build_context_synchronously

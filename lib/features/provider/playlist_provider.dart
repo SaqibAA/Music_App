@@ -17,24 +17,19 @@ class PlaylistProvider extends ChangeNotifier {
 
   final audioPlayer = AudioPlayer();
   bool isPlaying = false;
-  bool isShuffle = false;
-  bool isLoop = false;
+
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
 
   Future<void> setAudio() async {
     // Repeat song when completed
-    audioPlayer.setReleaseMode(ReleaseMode.stop);
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
     await audioPlayer.setSourceUrl(musicData[musicIndex].source!);
 
     audioPlayer.onPlayerStateChanged.listen(
       (state) {
         isPlaying = state == PlayerState.playing;
       },
-    );
-
-    audioPlayer.onPlayerComplete.listen(
-      (event) {},
     );
 
 // listen to audio duration
@@ -49,33 +44,20 @@ class PlaylistProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLoopMode() {
-    isLoop = !isLoop;
-    if (isLoop) {
-      audioPlayer.setReleaseMode(ReleaseMode.loop);
-    } else {
-      audioPlayer.setReleaseMode(ReleaseMode.stop);
-    }
-    notifyListeners();
-  }
-
   void setIndex(int index) {
     musicIndex = index;
-    print("object  $index");
     notifyListeners();
   }
 
   void setShuffle() {
-    isShuffle = !isShuffle;
-    // if (isShuffle) {
-    //   musicData.shuffle();
-    // } else {}
-
+    musicData = searchMusicData;
+    musicData.shuffle();
     notifyListeners();
   }
 
   void resetData() {
     isPlaying = false;
+    isSearch = false;
     duration = Duration.zero;
     position = Duration.zero;
   }

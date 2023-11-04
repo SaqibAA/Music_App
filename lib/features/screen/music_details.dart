@@ -121,28 +121,14 @@ class MusicDetail extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        music.setLoopMode();
-                      },
-                      icon: const Icon(Icons.loop_rounded),
-                      iconSize: 34,
-                      color: music.isLoop ? AppColors.appColor : null,
-                    ),
-                    IconButton(
-                      onPressed: () async {
-                        music.setShuffle();
-                      },
-                      icon: Icon(Icons.shuffle_rounded,
-                          color: music.isShuffle ? AppColors.appColor : null),
-                      iconSize: 34,
-                    ),
-                  ],
-                )
+                const SizedBox(height: 10),
+                IconButton(
+                  onPressed: () {
+                    music.setShuffle();
+                  },
+                  icon: const Icon(Icons.shuffle_rounded),
+                  iconSize: 34,
+                ),
               ],
             ),
           ),
