@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/architect.dart';
 import 'package:music_app/global.dart';
@@ -15,9 +16,13 @@ class DashBoard extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           title: playlist.isSearch
-              ? TextFormField(
+              ? TextField(
                   cursorColor: AppColors.whiteColor,
-                  style: textStyle(null, AppColors.whiteColor),
+                  style: const TextStyle(
+                    color: AppColors.whiteColor,
+                    decoration: TextDecoration.none,
+                    decorationThickness: 0,
+                  ),
                   onChanged: playlist.onSerachMusic,
                   decoration: InputDecoration(
                     hintText: "Search Song",
@@ -32,17 +37,26 @@ class DashBoard extends StatelessWidget {
                 )
               : const Text("My Music Playlist"),
           actions: [
+            playlist.isSearch
+                ? Container()
+                : IconButton(
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      swithScreenPushReplacement(context, const Login());
+                    },
+                    icon: const Icon(Icons.lock_rounded)),
             IconButton(
-                onPressed: () {
-                  if (playlist.isSearch) {
-                    playlist.setSearch(false);
-                    playlist.setSearchData(playlist.searchMusicData);
-                  } else {
-                    playlist.setSearch(true);
-                  }
-                },
-                icon: Icon(
-                    playlist.isSearch ? Icons.cancel_rounded : Icons.search))
+              onPressed: () {
+                if (playlist.isSearch) {
+                  playlist.setSearch();
+                  playlist.setSearchData(playlist.searchMusicData);
+                } else {
+                  playlist.setSearch();
+                }
+              },
+              icon:
+                  Icon(playlist.isSearch ? Icons.cancel_rounded : Icons.search),
+            ),
           ],
         ),
         body: playlist.isLoading
@@ -60,8 +74,9 @@ class DashBoard extends StatelessWidget {
                       final data = playlist.musicData;
                       return InkWell(
                         onTap: () {
-                          swithScreenPush(
-                              context, MusicDetail(response: data[index]));
+                          FocusScope.of(context).unfocus();
+                          playlist.setIndex(index);
+                          swithScreenPush(context, const MusicDetail());
                         },
                         child: Container(
                           height: height * 0.1,

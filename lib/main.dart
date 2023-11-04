@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.appColor),
           scaffoldBackgroundColor: AppColors.whiteColor,
           appBarTheme: AppBarTheme(
-            surfaceTintColor: AppColors.transparent,
+              surfaceTintColor: AppColors.transparent,
               backgroundColor: AppColors.appColor,
               foregroundColor: AppColors.whiteColor,
               systemOverlayStyle: SystemUiOverlayStyle(

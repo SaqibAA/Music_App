@@ -4,12 +4,18 @@ import 'package:music_app/architect.dart';
 
 class AuthProvider extends ChangeNotifier {
   String countryCode = "+91";
+  bool isDialog = false;
   bool isOTP = false;
   bool isValidNumber = false;
   String verID = "";
 
   TextEditingController phoneController = TextEditingController();
   TextEditingController otpController = TextEditingController();
+
+  void setDialog(bool val) {
+    isDialog = val;
+    notifyListeners();
+  }
 
   void setOptScreen(bool val) {
     isOTP = val;
@@ -27,7 +33,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> verifyMobileNumber(context) async {
-    Utils.verificationDailog(context, "Wait...");
+    setDialog(true);
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: "$countryCode${phoneController.text}",
       timeout: const Duration(minutes: 1),
@@ -35,48 +41,52 @@ class AuthProvider extends ChangeNotifier {
         otpController.text = credential.smsCode.toString();
       },
       verificationFailed: (FirebaseAuthException e) {
-        Navigator.of(context, rootNavigator: true).pop();
+        setDialog(false);
         if (e.code == 'invalid-phone-number') {
           Utils.snackBarError(
               "The Provided Phone Number is Not Valid.", context);
         }
       },
       codeSent: (String verificationId, int? resendToken) {
-        Navigator.of(context, rootNavigator: true).pop();
+        setDialog(false);
         Utils.snackBarSuccessfull("OTP Sent!", context);
         verID = verificationId;
         setOptScreen(true);
       },
       codeAutoRetrievalTimeout: (String verificationId) {
-        Navigator.of(context, rootNavigator: true).pop();
+        setDialog(false);
         Utils.snackBarError("Timeout!", context);
       },
     );
   }
 
-  Future<void> verifyOTP(context) async {
-    Utils.verificationDailog(context, "OTP Verifying...");
+  Future<void> verifyOTP(BuildContext context) async {
+    setDialog(true);
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verID,
         smsCode: otpController.text,
       );
-      auth.signInWithCredential(credential).then((result) {
-        if (result.user != null) {
-          // setValidNumber(false);
-          // setOptScreen(false);
-          Navigator.of(context, rootNavigator: true).pop();
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const DashBoard()),
-              (route) => false);
-        }
-      }).catchError((e) {
-        debugPrint(e);
-        Navigator.of(context, rootNavigator: true).pop();
-        Utils.snackBarError("Incorrect OTP!, Try Again", context);
-      });
+      UserCredential result = await auth.signInWithCredential(credential);
+      if (result.user != null) {
+        setDialog(false);
+        setOptScreen(false);
+        setValidNumber(false);
+        phoneController.text = '';
+        otpController.text ='';
+        verID = "";
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const DashBoard()),
+            (route) => false);
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.toString());
+      setDialog(false);
+      Utils.snackBarError("Incorrect OTP! Try Again", context);
     } catch (e) {
       debugPrint("rrrrrrr$e");
     }

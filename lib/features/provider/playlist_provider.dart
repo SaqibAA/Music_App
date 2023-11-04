@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 class PlaylistProvider extends ChangeNotifier {
   List<MusicModel> musicData = [];
   List<MusicModel> searchMusicData = [];
+  int musicIndex = 0;
 
   TextEditingController searchController = TextEditingController();
   bool isSearch = false;
@@ -16,17 +17,25 @@ class PlaylistProvider extends ChangeNotifier {
 
   final audioPlayer = AudioPlayer();
   bool isPlaying = false;
+  bool isShuffle = false;
+  bool isLoop = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
 
-  Future<void> setAudio(String url) async {
+  Future<void> setAudio() async {
     // Repeat song when completed
     audioPlayer.setReleaseMode(ReleaseMode.stop);
-    await audioPlayer.setSourceUrl(url);
+    await audioPlayer.setSourceUrl(musicData[musicIndex].source!);
 
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      isPlaying = state == PlayerState.playing;
-    });
+    audioPlayer.onPlayerStateChanged.listen(
+      (state) {
+        isPlaying = state == PlayerState.playing;
+      },
+    );
+
+    audioPlayer.onPlayerComplete.listen(
+      (event) {},
+    );
 
 // listen to audio duration
     audioPlayer.onDurationChanged.listen((newDuration) {
@@ -40,19 +49,44 @@ class PlaylistProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setLoopMode() {
+    isLoop = !isLoop;
+    if (isLoop) {
+      audioPlayer.setReleaseMode(ReleaseMode.loop);
+    } else {
+      audioPlayer.setReleaseMode(ReleaseMode.stop);
+    }
+    notifyListeners();
+  }
+
+  void setIndex(int index) {
+    musicIndex = index;
+    print("object  $index");
+    notifyListeners();
+  }
+
+  void setShuffle() {
+    isShuffle = !isShuffle;
+    // if (isShuffle) {
+    //   musicData.shuffle();
+    // } else {}
+
+    notifyListeners();
+  }
+
   void resetData() {
     isPlaying = false;
     duration = Duration.zero;
     position = Duration.zero;
   }
 
-  void setSearch(bool val) {
-    isSearch = val;
+  void setSearch() {
+    isSearch = !isSearch;
     notifyListeners();
   }
 
-  void setLoading(bool val) {
-    isLoading = val;
+  void setLoading() {
+    isLoading = !isLoading;
   }
 
   void setSearchData(List<MusicModel> data) {
@@ -61,7 +95,7 @@ class PlaylistProvider extends ChangeNotifier {
   }
 
   Future<void> getMusicData() async {
-    setLoading(true);
+    setLoading();
     const url = "https://storage.googleapis.com/uamp/catalog.json";
     Uri uri = Uri.parse(url);
     try {
@@ -75,10 +109,10 @@ class PlaylistProvider extends ChangeNotifier {
         }).toList();
         searchMusicData = musicData;
       }
-      setLoading(false);
+      setLoading();
       notifyListeners();
     } catch (e) {
-      setLoading(false);
+      setLoading();
       notifyListeners();
       if (kDebugMode) {
         print(e);

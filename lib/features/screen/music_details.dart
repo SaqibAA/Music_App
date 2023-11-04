@@ -5,12 +5,12 @@ import 'package:provider/provider.dart';
 import '../../global.dart';
 
 class MusicDetail extends StatelessWidget {
-  const MusicDetail({Key? key, required this.response}) : super(key: key);
-  final MusicModel response;
+  const MusicDetail({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Consumer<PlaylistProvider>(builder: (context, music, child) {
-      music.setAudio(response.source.toString());
+      music.setAudio();
       return WillPopScope(
         onWillPop: () async {
           music.resetData();
@@ -23,7 +23,10 @@ class MusicDetail extends StatelessWidget {
             title: const Text("Music Playing"),
             actions: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Utils.musicDetails(
+                        context, music.musicData[music.musicIndex]);
+                  },
                   icon: const Icon(Icons.info_outline_rounded))
             ],
           ),
@@ -36,7 +39,7 @@ class MusicDetail extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   child: Image.network(
                     height: height / 2.75,
-                    response.image.toString(),
+                    music.musicData[music.musicIndex].image.toString(),
                     width: double.infinity,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Image.asset(
@@ -47,14 +50,14 @@ class MusicDetail extends StatelessWidget {
                 ),
                 const SizedBox(height: 22),
                 Text(
-                  response.title.toString(),
+                  music.musicData[music.musicIndex].title.toString(),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  response.artist.toString(),
+                  music.musicData[music.musicIndex].artist.toString(),
                   style: const TextStyle(
                     fontSize: 20,
                   ),
@@ -74,8 +77,8 @@ class MusicDetail extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(formatTime(music.position)),
-                      Text(formatTime(music.duration - music.position)),
+                      Text(Utils.formatTime(music.position)),
+                      Text(Utils.formatTime(music.duration)),
                     ],
                   ),
                 ),
@@ -117,6 +120,28 @@ class MusicDetail extends StatelessWidget {
                       iconSize: 34,
                     ),
                   ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        music.setLoopMode();
+                      },
+                      icon: const Icon(Icons.loop_rounded),
+                      iconSize: 34,
+                      color: music.isLoop ? AppColors.appColor : null,
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        music.setShuffle();
+                      },
+                      icon: Icon(Icons.shuffle_rounded,
+                          color: music.isShuffle ? AppColors.appColor : null),
+                      iconSize: 34,
+                    ),
+                  ],
                 )
               ],
             ),
@@ -124,14 +149,5 @@ class MusicDetail extends StatelessWidget {
         ),
       );
     });
-  }
-
-  String formatTime(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    final hours = twoDigits(duration.inHours);
-    final twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    final twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return [if (duration.inHours > 0) hours, twoDigitMinutes, twoDigitSeconds]
-        .join(':');
   }
 }
